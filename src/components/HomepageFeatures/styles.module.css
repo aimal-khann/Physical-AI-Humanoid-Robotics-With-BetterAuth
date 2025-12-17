@@ -1,0 +1,28 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.featureSvg {
+  height: 200px;
+  width: 200px;
+}
+
+.feature {
+  padding: 1rem;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+}
+
+.feature:hover {
+  transform: scale(1.05);
+  border-color: var(--ifm-color-primary);
+}
+
+.readMoreBtn {
+  margin-top: auto; /* Pushes the button to the bottom */
+  display: block;
+}

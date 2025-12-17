@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  title: RAG Chatbot API
+  version: 1.0.0
+  description: API for the Retrieval Augmented Generation (RAG) chatbot, providing answers based on Docusaurus documentation.
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /ask:
+    post:
+      summary: Ask a question to the RAG Chatbot
+      description: Receives a user query, retrieves relevant context from a vector database (Qdrant), and generates an answer using OpenAI's GPT-4o, strictly adhering to the retrieved context.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: The user's question or statement.
+                  example: "How do I install Docusaurus?"
+      responses:
+        '200':
+          description: Successful response with the AI's answer and sources.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    description: The AI-generated answer based on the provided context.
+                    example: "To install Docusaurus, you can use npm or yarn. Run `npx create-docusaurus@latest my-website classic` to create a new project."
+                  sources:
+                    type: array
+                    description: A list of source documents or sections used to generate the answer.
+                    items:
+                      type: object
+                      properties:
+                        file:
+                          type: string
+                          description: The path to the source Markdown file.
+                          example: "docs/tutorial-basics/create-a-document.md"
+                        start_line:
+                          type: integer
+                          description: The starting line number in the source file.
+                          example: 10
+                        end_line:
+                          type: integer
+                          description: The ending line number in the source file.
+                          example: 25
+                        title:
+                          type: string
+                          description: The title of the source document or section.
+                          example: "Create a Document"
+        '400':
+          description: Invalid request, e.g., empty query.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Query cannot be empty."
+        '500':
+          description: Internal server error or issues with external services (OpenAI, Qdrant).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "An internal server error occurred."
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The user's question or statement.
+          example: "What is Docusaurus?"
+    AskResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+          description: The AI-generated answer.
+        sources:
+          type: array
+          items:
+            type: object
+            properties:
+              file:
+                type: string
+                description: Path to the source document.
+              title:
+                type: string
+                description: Title of the source document/section.

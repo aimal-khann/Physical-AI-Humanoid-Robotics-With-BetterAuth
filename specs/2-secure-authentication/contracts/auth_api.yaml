@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: Authentication API
+  description: API for user registration, login, logout, and session management, powered by Better Auth.
+  version: 1.0.0
+
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                softwareBackground:
+                  type: string
+                hardwareBackground:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '200':
+          description: User registered successfully. Returns a session object.
+        '400':
+          description: Bad request (e.g., missing fields, invalid email).
+        '409':
+          description: Conflict (e.g., email already in use).
+
+  /login:
+    post:
+      summary: Log in an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User logged in successfully. Returns a session object.
+        '401':
+          description: Unauthorized (e.g., incorrect credentials).
+
+  /logout:
+    post:
+      summary: Log out the current user
+      responses:
+        '200':
+          description: User logged out successfully.
+
+  /session:
+    get:
+      summary: Get the current user's session
+      responses:
+        '200':
+          description: Returns the current session object if the user is authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      email:
+                        type: string
+        '401':
+          description: Unauthorized (user is not authenticated).
